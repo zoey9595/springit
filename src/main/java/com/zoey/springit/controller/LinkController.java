@@ -2,13 +2,15 @@ package com.zoey.springit.controller;
 
 import com.zoey.springit.domain.Link;
 import com.zoey.springit.repository.LinkRepository;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/links")
+@Controller
 public class LinkController {
 
     private LinkRepository linkRepository;
@@ -17,31 +19,21 @@ public class LinkController {
         this.linkRepository = linkRepository;
     }
 
-    // list
     @GetMapping("/")
-    public List<Link> list() {
-        return linkRepository.findAll();
+    public String list(Model model) {
+        model.addAttribute("links", linkRepository.findAll());
+        return "link/list";
     }
 
-    // CRUD
-    @PostMapping("/create")
-    public Link create(@ModelAttribute Link link) {
-        return linkRepository.save(link);
-    }
-
-    @GetMapping("/{id}")
-    public Optional<Link> read(@PathVariable Long id) {
-        return linkRepository.findById(id);
-    }
-
-    @PutMapping("/{id}")
-    public Link update(@PathVariable Long id, @ModelAttribute Link link) {
-        // get the id
-        return linkRepository.save(link);
-    }
-
-    @DeleteMapping("/delete")
-    public void delete(@PathVariable Long id) {
-        linkRepository.deleteById(id);
+    @GetMapping("/link/{id}")
+    public String read(@PathVariable Long id, Model model) {
+        Optional<Link> link = linkRepository.findById(id);
+        if (link.isPresent()) {
+            model.addAttribute("link", link.get());
+            model.addAttribute("success", model.containsAttribute("success"));
+            return "link/view";
+        } else {
+            return "redirect:/";
+        }
     }
 }
