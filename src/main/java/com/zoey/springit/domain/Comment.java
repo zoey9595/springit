@@ -1,19 +1,25 @@
 package com.zoey.springit.domain;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import com.zoey.springit.service.BeanUtil;
+import lombok.*;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 @Entity
-@Data
+@RequiredArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 public class Comment extends Auditable {
 
     @Id
     @GeneratedValue
     private Long id;
+
     @NonNull
     private String body;
 
@@ -21,8 +27,12 @@ public class Comment extends Auditable {
     @NonNull
     private Link link;
 
-    public Comment(@NonNull String body, @NonNull Link link) {
-        this.body = body;
-        this.link = link;
+    public String getPrettyTime() {
+        PrettyTime pt = BeanUtil.getBean(PrettyTime.class);
+        return pt.format(convertToDateViaInstant(getCreationDate()));
+    }
+
+    private Date convertToDateViaInstant(LocalDateTime dateToConvert) {
+        return java.util.Date.from(dateToConvert.atZone(ZoneId.systemDefault()).toInstant());
     }
 }
