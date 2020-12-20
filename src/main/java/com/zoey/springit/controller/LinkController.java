@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
@@ -30,7 +29,7 @@ public class LinkController {
         Optional<Link> link = linkRepository.findById(id);
         if (link.isPresent()) {
             model.addAttribute("link", link.get());
-            model.addAttribute("success", model.containsAttribute("success"));
+//            model.addAttribute("success", model.containsAttribute("success"));
             return "link/view";
         } else {
             return "redirect:/";
