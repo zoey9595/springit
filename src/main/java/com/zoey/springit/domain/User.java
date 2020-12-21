@@ -1,5 +1,6 @@
 package com.zoey.springit.domain;
 
+import com.zoey.springit.domain.validator.PasswordsMatch;
 import lombok.*;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Setter
 @ToString
 @NoArgsConstructor
+@PasswordsMatch
 public class User implements UserDetails {
 
     @Id
@@ -62,6 +64,12 @@ public class User implements UserDetails {
     @NotEmpty(message = "Please enter alias.")
     @Column(nullable = false, unique = true)
     private String alias;
+
+    @Transient
+    @NotEmpty(message = "Please enter Password Confirmation.")
+    private String confirmPassword;
+
+    private String activationCode;
 
     public User(@NotNull @Size(min = 8, max = 20) String email, @NotNull String password, @NotNull boolean enabled, @NonNull @NotEmpty(message = "You must enter First Name.") String firstName, @NonNull @NotEmpty(message = "You must enter Last Name.") String lastName, @NonNull @NotEmpty(message = "Please enter alias.") String alias) {
         this.email = email;
