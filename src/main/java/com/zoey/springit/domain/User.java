@@ -1,11 +1,13 @@
 package com.zoey.springit.domain;
 
 import lombok.*;
+import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.*;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @ToString
-//@NoArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -44,10 +46,34 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
-    public User(String email, String password, boolean enabled) {
+    @NonNull
+    @NotEmpty(message = "You must enter First Name.")
+    private String firstName;
+
+    @NonNull
+    @NotEmpty(message = "You must enter Last Name.")
+    private String lastName;
+
+    @Transient
+    @Setter(AccessLevel.NONE)
+    private String fullName;
+
+    @NonNull
+    @NotEmpty(message = "Please enter alias.")
+    @Column(nullable = false, unique = true)
+    private String alias;
+
+    public User(@NotNull @Size(min = 8, max = 20) String email, @NotNull String password, @NotNull boolean enabled, @NonNull @NotEmpty(message = "You must enter First Name.") String firstName, @NonNull @NotEmpty(message = "You must enter Last Name.") String lastName, @NonNull @NotEmpty(message = "Please enter alias.") String alias) {
         this.email = email;
         this.password = password;
         this.enabled = enabled;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.alias = alias;
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 
     @Override
