@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class UserService {
 
@@ -25,4 +27,11 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void saveUsers(User... users) {
+        for (User user : users) {
+            logger.info("Saving User: " + user.getEmail());
+            userRepository.save(user);
+        }
+    }
 }
